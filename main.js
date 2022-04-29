@@ -1,16 +1,36 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
+
+const KEY_PLAYER_STRONGAE = 'NewBie_Player'
+
 const heading = $("header h2");
 const cdThumb = $(".cd-thumb");
 var audio = $("#audio");
 const cd = $(".cd");
 const btnPlay = $(".btn-toggle-play");
 const btnPlayer = $(".player");
-//const isPlaying = $(".playing")
+const progress = $("#progress");
+const btnPrev = $(".btn-prev");
+const btnNext = $(".btn-next");
+const btnRandom = $(".btn-random");
+const btnRep = $(".btn-repeat");
+const Playlist = $(".playlist")
+const progressRange = $('.progressRange');
+const endTime = $('.endTime');
+const rangeValue = $('.rangeValue');
+const startTime = $('.startTime');
+const volumeSet = $('#volumeAdjust')
+const volumeIcon = $('.volume .btn-volume')
+const activeSong = $('.song.active');
+
 
 const app = {
+    config: JSON.parse(localStorage.getItem(KEY_PLAYER_STRONGAE)) || {},
     currentIndex: 0,
     isPlaying: false,
+    isRandom: false,
+    isRepeat: false,
+    isMute: false,
     songs: [
         {
             id: 158022,
@@ -23,193 +43,104 @@ const app = {
             id: 87532,
             name: "Rồi Người Thương Cũng Hoá Người Dưng",
             artists: ["Hiền Hồ"],
-            src: "https://data37.chiasenhac.com/downloads/1905/1/1904537-f05041fa/128/Roi%20Nguoi%20Thuong%20Cung%20Hoa%20Nguoi%20Dung%20-%20H.mp3",
+            src: "https://data38.chiasenhac.com/downloads/1905/4/1904537-f05041fa/128/Roi%20Nguoi%20Thuong%20Cung%20Hoa%20Nguoi%20Dung%20-%20H.mp3",
             img: "https://data.chiasenhac.com/data/cover/88/87532.jpg",
         },
         {
             id: 159373,
             name: "Khi Nào (Hoàn Châu Cách Cách OST)",
             artists: ["Hương Ly"],
-            src: "https://data.chiasenhac.com/down2/2236/1/2235964-02092078/128/Khi%20Nao%20Hoan%20Chau%20Cach%20Cach%20OST_%20-%20Huong.mp3",
+            src: "https://data.chiasenhac.com/down2/2236/4/2235964-02092078/32/Khi%20Nao%20Hoan%20Chau%20Cach%20Cach%20OST_%20-%20Huong.m4a",
             img: "https://data.chiasenhac.com/data/cover/160/159373.jpg",
         },
-        {
-            id: 159999,
-            name: "Sau Lưng Anh Có Ai Kìa",
-            artists: ["Thiều Bảo Trâm"],
-            src: "https://data.chiasenhac.com/down2/2238/1/2237724-1570b544/128/Sau%20Lung%20Anh%20Co%20Ai%20Kia%20-%20Thieu%20Bao%20Tram.mp3",
-            img: "https://data.chiasenhac.com/data/cover/160/159999.jpg",
-        },
-        {
-            id: 160129,
-            name: "Buồn Không Thể Buông",
-            artists: ["Dreamer", "Phí Phương Anh", "RIN9", "MiiNa"],
-            src: "https://data.chiasenhac.com/down2/2239/1/2238042-d955f6f0/128/Buon%20Khong%20The%20Buong%20-%20Dreamer_%20Phi%20Phuo.mp3",
-            img: "https://data.chiasenhac.com/data/cover/161/160129.jpg",
-        },
-        {
-            id: 158976,
-            name: "Anh Không Muốn Ra Đi (Lofi Version)",
-            artists: ["Vicky Nhung", "Long Rex"],
-            src: "https://data.chiasenhac.com/down2/2235/1/2234887-44357607/128/Anh%20Khong%20Muon%20Ra%20Di%20Lofi%20Version_%20-%20Vic.mp3",
-            img: "https://data.chiasenhac.com/data/cover/159/158976.jpg",
-        },
-        {
-            id: 160323,
-            name: "Tháng Mấy Em Nhớ Anh (Cover in Hoa Concert)",
-            artists: "Bùi Anh Tuấn",
-            src: "https://data.chiasenhac.com/down2/2239/1/2238621-8b6f8734/128/Thang%20May%20Em%20Nho%20Anh%20Cover%20in%20Hoa%20Concer.mp3",
-            img: "https://data.chiasenhac.com/data/cover/161/160323.jpg",
-        },
-        {
-            id: 157878,
-            name: "Đám Cưới Nha?",
-            artists: ["Hồng Thanh", "DJ Mie"],
-            src: "https://data.chiasenhac.com/down2/2232/1/2231831-3e0343cf/128/Dam%20Cuoi%20Nha_%20-%20Hong%20Thanh_%20DJ%20Mie.mp3",
-            img: "https://data.chiasenhac.com/data/cover/158/157878.jpg",
-        },
-        {
-            id: 159831,
-            name: "Đã Sai Từ Lúc Đầu (Cover in Hoa Concert)",
-            artists: ["Trung Quân", "Bùi Anh Tuấn"],
-            src: "https://data.chiasenhac.com/down2/2238/1/2237224-b41d4cd5/128/Da%20Sai%20Tu%20Luc%20Dau%20Cover%20in%20Hoa%20Concert_.mp3",
-            img: "https://data.chiasenhac.com/data/cover/160/159831.jpg",
-        },
-        {
-            id: 160221,
-            name: "Tay Vớt Ánh Trăng (Live)",
-            artists: ["Mỹ Tâm"],
-            src: "https://data.chiasenhac.com/down2/2239/1/2238252-716cbfe7/128/Tay%20Vot%20Anh%20Trang%20Live_%20-%20My%20Tam_.mp3",
-            img: "https://data.chiasenhac.com/data/cover/161/160221.jpg",
-        },
-        {
-            id: 130278,
-            name: "Cưới Nhau Đi (Yes I Do)",
-            artists: ["Hiền Hồ", "Bùi Anh Tuấn"],
-            src: "https://data3.chiasenhac.com/downloads/2129/1/2128097-e1d4a8b2/128/Cuoi%20Nhau%20Di%20Yes%20I%20Do_%20-%20Hien%20Ho_%20Bui%20An.mp3",
-            img: "https://data.chiasenhac.com/data/cover/131/130278.jpg",
-        },
-        {
-            id: 157914,
-            name: "Cà Phê",
-            artists: "Min",
-            src: "https://data.chiasenhac.com/down2/2232/1/2231953-a9d619ec/128/Ca%20Phe%20-%20Min.mp3",
-            img: "https://data.chiasenhac.com/data/cover/158/157914.jpg",
-        },
-        {
-            id: 160766,
-            name: "Ai Chung Tình Được Mãi (Cover)",
-            artists: ["Trung Quân", "ACV"],
-            src: "https://data.chiasenhac.com/down2/2240/1/2239690-7eaa36fe/128/Ai%20Chung%20Tinh%20Duoc%20Mai%20Cover_%20-%20Trung%20Qu.mp3",
-            img: "https://data.chiasenhac.com/data/cover/161/160766.jpg",
-        },
-        {
-            id: 157403,
-            name: "Don't Break My Heart",
-            artists: ["Binz", "Touliver"],
-            src: "https://data.chiasenhac.com/down2/2231/1/2230476-3402ad5a/128/Don_t%20Break%20My%20Heart%20-%20Binz_%20Touliver.mp3",
-            img: "https://data.chiasenhac.com/data/cover/158/157403.jpg",
-        },
-        {
-            id: 160693,
-            name: "Bước Qua Nhau (Live)",
-            artists: ["Mỹ Tâm", "Vũ"],
-            src: "https://data.chiasenhac.com/down2/2240/1/2239499-dcad4a32/128/Buoc%20Qua%20Nhau%20Live_%20-%20My%20Tam_%20Vu.mp3",
-            img: "https://data.chiasenhac.com/data/cover/161/160693.jpg",
-        },
-        {
-            id: 157283,
-            name: "Hẹn Ước Từ Hư Vô (Live)",
-            artists: ["Mỹ Tâm"],
-            src: "https://data.chiasenhac.com/down2/2231/1/2230177-067507fa/128/Hen%20Uoc%20Tu%20Hu%20Vo%20Live_%20-%20My%20Tam_.mp3",
-            img: "https://data.chiasenhac.com/data/cover/158/157283.jpg",
-        },
-        {
-            id: 160967,
-            name: "Kiếp Rong Buồn (Lofi Version)",
-            artists: ["Vicky Nhung", "Long Rex"],
-            src: "https://data.chiasenhac.com/down2/2241/1/2240156-0c73190d/128/Kiep%20Rong%20Buon%20Lofi%20Version_%20-%20Vicky%20Nhu.mp3",
-            img: "https://data.chiasenhac.com/data/cover/161/160967.jpg",
-        },
-        {
-            id: 157112,
-            name: "Tình Đơn Côi (Lofi Version)",
-            artists: ["Vicky Nhung", "Long Rex"],
-            src: "https://data.chiasenhac.com/down2/2230/1/2229752-0d0e7dff/128/Tinh%20Don%20Coi%20Lofi%20Version_%20-%20Vicky%20Nhung.mp3",
-            img: "https://data.chiasenhac.com/data/cover/158/157112.jpg",
-        },
-        {
-            id: 128364,
-            name: "Đúng Cũng Thành Sai",
-            artists: ["Mỹ Tâm"],
-            src: "https://data3.chiasenhac.com/downloads/2120/1/2119974-401a7459/128/Dung%20Cung%20Thanh%20Sai%20-%20My%20Tam.mp3",
-            img: "https://data.chiasenhac.com/data/cover/129/128364.jpg",
-        },
-        {
-            id: 154910,
-            name: "Ngày Đầu Tiên",
-            artists: ["Đức Phúc"],
-            src: "https://data.chiasenhac.com/down2/2224/1/2223570-77fd7172/128/Ngay%20Dau%20Tien%20-%20Duc%20Phuc.mp3",
-            img: "https://data.chiasenhac.com/data/cover/155/154910.jpg",
-        },
-        {
-            id: 161377,
-            name: "Tự Sự (Qua Bển Làm Chi OST)",
-            artists: ["Orange"],
-            src: "https://data.chiasenhac.com/down2/2242/4/2241202-2664d006/128/Tu%20Su%20Qua%20Ben%20Lam%20Chi%20OST_%20-%20Orange.mp3",
-            img: "https://data.chiasenhac.com/data/cover/162/161377.jpg",
-        },
-        {
-            id: 99800,
-            name: "Nơi Mình Dừng Chân",
-            artists: ["Mỹ Tâm"],
-            src: "https://data33.chiasenhac.com/downloads/1990/1/1989453-f609d9b4/128/Noi%20Minh%20Dung%20Chan%20-%20My%20Tam.mp3",
-            img: "https://data.chiasenhac.com/data/cover/100/99800.jpg",
-        },
-        {
-            id: 160865,
-            name: "Chơi Vơi",
-            artists: ["K-ICM", "Trung Quân"],
-            src: "https://data.chiasenhac.com/down2/2240/4/2239924-5f9fa42a/128/Choi%20Voi%20-%20K-ICM_%20Trung%20Quan.mp3",
-            img: "https://data.chiasenhac.com/data/cover/161/160865.jpg",
-        },
-        {
-            id: 152195,
-            name: "Gieo Quẻ",
-            artists: ["Hoàng Thuỳ Linh", "Đen"],
-            src: "https://data.chiasenhac.com/down2/2216/1/2215074-8d51eab0/128/Gieo%20Que%20-%20Hoang%20Thuy%20Linh_%20Den.mp3",
-            img: "https://data.chiasenhac.com/data/cover/153/152195.jpg",
-        },
-        {
-            id: 151033,
-            name: "Lối Nhỏ",
-            artists: ["Đen", "Phương Anh Đào"],
-            src: "https://data.chiasenhac.com/down2/2211/1/2210420-cad860c9/128/Loi%20Nho%20-%20Den_%20Phuong%20Anh%20Dao.mp3",
-            img: "https://data.chiasenhac.com/data/cover/152/151033.jpg",
-        },
     ],
+    setConfig: function (key, value) {
+        this.config[key] = value;
+        localStorage.setItem(KEY_PLAYER_STRONGAE, JSON.stringify(this.config));
+    },
+
+    loadConfig: function () {
+
+        this.isRepeat = !!this.config.isRepeat;  // convert to boolean
+        this.isRandom = !!this.config.isRandom;
+    },
     // render ra view
     render: function () {
-        const htmls = this.songs.map((song) => {
-            return `<div class="song">
+        const htmls = this.songs.map((song, index) => {
+            return `<div class="song ${index === this.currentIndex ? 'active' : ''}" data-index="${index}">
          <div class="thumb" style="background-image: url('${song.img}')">
          </div>
          <div class="body">
            <h3 class="title">${song.name}</h3>
-           <p class="author">${song.artists}</p>
+           <p class="author">${[].concat(song.artists).join('; ')}</p>
          </div>
          <div class="option">
            <i class="fas fa-ellipsis-h"></i>
          </div>
        </div>`;
         });
-        $(".playlist").innerHTML = htmls.join("");
+        Playlist.innerHTML = htmls.join("");
     },
     //xu ly events
     handelEvents: function () {
-        const _this = this
+        const _this = this;
         const cdWidth = cd.offsetWidth;
+        //cd quay tron
+
+        const cdThumbAnimate = cdThumb.animate([{ transform: "rotate(360deg)" }], {
+            duration: 60000,
+            interactions: Infinity,
+        });
+        cdThumbAnimate.pause();
+        //Next bai hat
+        btnNext.onclick = function () {
+            if (this.isRandom) {
+                playRandomSong();
+            } else {
+                _this.nextsong();
+            }
+            audio.play();
+            _this.render();
+            _this.ScrollActiveSong()
+        };
+        function volumeDisplay() {
+            volumeSet.value = _this.songVolume;
+            var volumeColor = 'linear-gradient(90deg, rgb(75, 36, 173)' + _this.songVolume + '%, rgb(214, 214, 214) ' + _this.songVolume + '%)';
+            volumeSet.style.background = volumeColor;
+        };
+        //Volume adjustment
+        volumeSet.oninput = function (e) {
+            _this.songVolume = e.target.value;
+            audio.volume = _this.songVolume / 100;
+            volumeDisplay();
+            _this.setConfig("volume", _this.songVolume);
+            _this.volumeIconHandle();
+        };
+        volumeIcon.onmousedown = function () {
+            volumeIcon.classList.add('active');
+        }
+        volumeIcon.onmouseup = function () {
+            volumeIcon.classList.remove('active');
+        }
+        //btnPrev
+        btnPrev.onclick = function () {
+            if (this.isRandom) {
+                playRandomSong();
+            } else {
+                _this.prvesong();
+            }
+            audio.play();
+            _this.render();
+            _this.ScrollActiveSong()
+        };
         // xu ly cd
+        volumeIcon.onclick = function () {
+            audio.volume = 0;
+            _this.songVolume = audio.volume;
+            volumeDisplay();
+            volumeIcon.innerHTML = '<i class="fas fa-volume-mute"></i>'
+        };
+
         document.onscroll = function () {
             const scrollCD = window.scrollY || document.documentElement.scrollTop;
             const newCdWith = cdWidth - scrollCD;
@@ -222,15 +153,79 @@ const app = {
         btnPlay.onclick = function () {
             //console.log(audio.src)
             if (_this.isPlaying) {
-                _this.isPlaying = false
                 audio.pause();
-                btnPlayer.classList.remove("playing");
             } else {
-                _this.isPlaying = true
                 audio.play();
-                btnPlayer.classList.add("playing");
             }
         };
+        // bat tat random
+        btnRandom.onclick = function (e) {
+            _this.isRandom = !_this.isRandom
+            _this.setConfig('isRandom', _this.isRandom);
+            btnRandom.classList.toggle('active', _this.isRandom);
+
+        };
+        // bat tat repeat bai hat
+        btnRep.onclick = function (e) {
+            _this.isRepeat = !_this.isRepeat
+            _this.setConfig('isRepeat', _this.isRepeat);
+            btnRep.classList.toggle('active', _this.isRepeat);
+        };
+        //console.log(btnRep)
+        audio.onplay = function () {
+            _this.isPlaying = true;
+            btnPlayer.classList.add("playing");
+            cdThumbAnimate.play();
+        };
+
+        audio.onpause = function () {
+            _this.isPlaying = false;
+            btnPlayer.classList.remove("playing");
+            cdThumbAnimate.pause();
+        };
+
+        audio.onended = function () {
+            if (_this.isRepeat) {
+                audio.play();
+            } else {
+                btnNext.click()
+            }
+
+        };
+
+        Playlist.onclick = function (e) {
+            let nextSongNode = e.target.closest('.song:not(.active)');
+            let optionNode = e.target.closest('.option');
+            // not active song || option button => process
+            if (nextSongNode || optionNode) {
+                if (nextSongNode && !optionNode) {
+                    _this.currentIndex = Number(nextSongNode.dataset.index);
+                    _this.loadCurrentSong()
+                    _this.render();
+                    audio.play();
+                }
+                else if (optionNode) {
+                    console.log('e.target:', e.target, 'optionNode:', optionNode);
+                }
+            }
+        },
+
+            //thay doi time bai hat tua
+            (audio.ontimeupdate = function () {
+                if (audio.duration) {
+                    const progressPercent = Math.floor(
+                        (audio.currentTime / audio.duration) * 100
+                    );
+                    //console.log(progressPercent)
+                    progress.value = progressPercent;
+                }
+            }),
+            // tua bai hat
+            (progress.oninput = function (e) {
+                const seekTime = (audio.duration / 100) * e.target.value;
+                audio.currentTime = seekTime;
+
+            });
     },
     //dinh nghia thuoc tinh
     defineProperty: function () {
@@ -239,6 +234,53 @@ const app = {
                 return this.songs[this.currentIndex];
             },
         });
+    },
+    volumeIconHandle: function () {
+        const volume = this.songVolume;
+        if (volume > 50) volumeIcon.innerHTML = '<i class="fas fa-volume-up"></i>'
+        else {
+            if (volume >= 5 && volume <= 50) volumeIcon.innerHTML = '<i class="fas fa-volume-down"></i>'
+            else volumeIcon.innerHTML = '<i class="fas fa-volume-mute"></i>'
+        }
+
+    },
+    volumeLoad: function () {
+        ///Volume 
+        this.songVolume = this.config.volume;
+        volumeSet.value = this.songVolume;
+        var volumeColor = 'linear-gradient(90deg, rgb(75, 36, 173)' + this.songVolume + '%, rgb(214, 214, 214) ' + this.songVolume + '%)';
+        volumeSet.style.background = volumeColor;
+        //Icon
+        this.volumeIconHandle();
+
+    },
+    //randomsong
+    playRandomSong: function () {
+        let NIndex
+        do {
+            NIndex = Math.floor(Math.random() * this.songs.length)
+        } while (NIndex == this.currentIndex)
+
+        this.currentIndex = NIndex;
+
+        this.loadCurrentSong();
+    },
+    ScrollActiveSong: function () {
+        setTimeout(() => {
+            if (this.currentIndex < 2) {
+                $('.song.active').ScrollIntoView({
+                    behavior: 'smooth',
+                    block: 'end'
+                });
+            } else {
+                $('.song.active').ScrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            }
+
+        }, 300)
+
     },
 
     loadCurrentSong: function () {
@@ -249,16 +291,38 @@ const app = {
         audio.src = this.currentSong.src;
         // console.log(audio.src)
     },
+    nextsong: function () {
+        this.currentIndex++;
+        if (this.currentIndex >= this.songs.length - 1) {
+            this.currentIndex = 0;
+        }
+        this.loadCurrentSong();
+    },
+    prvesong: function () {
+        this.currentIndex--;
+        if (this.currentIndex < 0) {
+            this.currentIndex = this.songs.length - 1;
+        }
+        this.loadCurrentSong();
+    },
 
     start: function () {
+
+        this.loadConfig();
+
         this.defineProperty();
 
+        this.playRandomSong();
+        this.volumeLoad();
         this.handelEvents();
 
         //tai tt bai hat dau tien vao ui khi khoi dong ung dung
         this.loadCurrentSong();
 
         this.render(); // goi lai render
+        btnRep.classList.toggle('active', this.isRepeat);
+        btnRandom.classList.toggle('active', this.isRandom);
+
     },
 };
 

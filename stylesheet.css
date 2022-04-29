@@ -147,7 +147,7 @@
   .song.active {
     background-color: var(--primary-color);
   }
-  
+   /* click play song */
   .song:active {
     opacity: 0.8;
   }
@@ -186,4 +186,123 @@
     color: #999;
     font-size: 18px;
   }
+  .btn-volume{
+    margin-left: 18px;
+  }
+  .progressRange {
+    position: relative;
+    --c: none;
+  }
+  .progressRange:hover{
+    --c: block;
+  }
+  .rangeValue{
+    width: 50px; 
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    display: var(--c);
+    background: #03a9f4;
+    color: #fff;
+    font-size: 12px;
+    position: absolute;
+    margin-top:3px;
+    left: 2%;
+     transform: translate(-50%, 0); 
+    border-radius: 6px;
+  }
   
+  .rangeValue:before{
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 10px solid #03a9f4;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    margin-top: -1px;
+  }
+  /* Time indicate */
+  .time {
+    display: flex;
+    justify-content:space-between;
+
+  }
+  /* Volume adjustment */
+  .volume {
+    display: flex;
+  }
+  .volumeAdjust{
+    width: 90%;
+    margin-top:30px;
+    -webkit-appearance: none;
+    height: 4px;
+    background: linear-gradient(90deg, rgb(75, 36, 173) 0%, rgb(214, 214, 214) 0%);
+    border-radius: 1px;
+    outline: none;
+    opacity: 0.8;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s;
+    /* box-shadow: 0px 1px 1px 1px rgb(182, 172, 172); */
+ 
+  }
+  .volumeAdjust::-webkit-slider-thumb {
+    display: var(--c1);
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 4px 0 rgba(0,0,0, 1);
+    background-color: var(--primary-color);
+    cursor: pointer;
+  }
+  .volumeAdjust::-moz-range-thumb {
+    display: var(--c1);
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 4px 0 rgba(0,0,0, 1);
+    background-color: var(--primary-color);
+    cursor: pointer;
+  }
+  .volumeAdjust:hover{
+    opacity: 1;
+    padding: 2px 0;
+    cursor: pointer;
+  
+  }
+  .volumeRange {
+    --c1: none
+  }
+  .volumeRange:hover {
+    --c1:block;
+
+  }
+  @keyframes fadeIn{
+    0%{ opacity:0 ;
+      background-color:rgb(248, 240, 247);
+      transform:translateY((-50px))
+    }
+      50%{ opacity:0.6;
+        background-color:rgb(223, 211, 217);
+        transform:translateY((-30px))
+      }
+      100%{ opacity:0.7;
+        background-color:rgb(216, 200, 215);
+      transform:translateY((0px))
+    }
+   }
+   .fav img{
+     margin-bottom: -2px;
+     padding-right:2px;
+     width:18px;
+     height:18px;
+     
+  
+   }
